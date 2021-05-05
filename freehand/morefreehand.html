@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        div {
+            width: 50%;
+            height: 200px;
+            background-color: rgb(78, 37, 190);
+            color: rgb(32, 32, 32);
+        }
+        
+        #div1:hover {
+            opacity: 0;
+        }
+    </style>
+
+    <script>
+        const hide = (id) => {
+            var item = document.getElementById(id);
+            item.style.opacity = 0
+        }
+        const show = (id) => {
+            var item = document.getElementById(id);
+            item.style.opacity = 1;
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Click on a blue box</h1>
+    <div id="div1">
+        <h1>This is div1</h1>
+    </div>
+
+    <div id="div2" onmouseenter="hide('div2');" onmouseleave="show('div2');">
+        <h2>This is div2</h2>
+    </div>
+</body>
+
+</html>

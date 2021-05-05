@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>Passer rating</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <style>
+        body {
+            width: 50%;
+            margin: auto;
+            /*Permalink-use to edit and share*/
+            /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#eded2f+34,c9d0d6+52,eded42+75 */
+            background: #7165e0;
+            /* Old browsers */
+            background: -moz-linear-gradient(left, #434877 34%, #ccdce9 52%, #9c8fe0 75%);
+            /* FF3.6-15 */
+            background: -webkit-linear-gradient(left, #7ca5d4 34%, #c9d0d6 52%, #73a9c9 75%);
+            /* Chrome10-25,Safari5.1-6 */
+            background: linear-gradient(to right, #82a8e0 34%, #160961 52%, #8b71e9 75%);
+            /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+            filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#eded2f', endColorstr='#eded42', GradientType=1);
+            /* IE6-9 */
+            text-align: center;
+            border-radius: 3px;
+        }
+        
+        table {
+            width: 50%;
+            margin: auto;
+            font-family: arial, sans-serif;
+            font-size: 1.2rem;
+            border: 3px inset lightblue;
+            border-collapse: collapse;
+            line-height: 2rem;
+        }
+        
+        caption {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: white;
+            background-color: gray;
+            text-shadow: 2px 2px black;
+        }
+        
+        td,
+        th {
+            border: solid 1px gray;
+            text-align: center;
+        }
+        
+        h1 {
+            text-align: center;
+        }
+        
+        #rating {
+            opacity: 0;
+            font-size: 4rem;
+            color: red;
+            text-align: middle;
+            width: 200px;
+            margin: auto;
+        }
+    </style>
+
+
+    <script>
+        //global variables to store the parameter values
+        //some of the variable names are the same as the parameter names for convenience
+        //but we could use any name we want for the the variables
+        var qbname;
+        var email;
+        var gamedate;
+        var attempts;
+        var completions;
+        var yards;
+        var touchdowns;
+        var interceptions;
+        var revealTimer;
+        var opacity = 0;
+        var deg = 18;
+        var rems = .5;
+
+
+
+
+
+
+
+
+
+
+        //onLoad demonstration
+        const onLoad = () => {
+            //get the whole url
+            var url = window.location.href;
+
+            //find the ? where the parameter list begins
+            const parameterStart = url.indexOf("?") + 1;
+
+            //grab just the parameter list part
+            url = url.substring(parameterStart);
+
+            //parametrers are seperated by &s.  So we can split the list into an array
+            //whose elements look like name=value
+            const parameterList = url.split("&");
+
+            //now get the parameter values into the global variables
+            getParameterValues(parameterList);
+
+            //display the parameter values
+            displayParameters();
+
+            //calculate the passers's rating
+            calculatePasserRating();
+
+            //reveal the passer's rating
+            revealPasserRating();
+
+
+        }
+
+        ////////revealPasserRating
+        const revealPasserRating = () => {
+
+            revealTimer = setInterval(updateDisplay, 50);
+
+        }
+
+        ///////////updateDisplay/////////////
+        const updateDisplay = () => {
+
+            //get a reference to the rating div
+            var rating = document.getElementById("rating");
+            opacity += .025;
+
+            rating.style.opacity = opacity / 2;
+            rating.style.fontSize = rems + 'rem';
+            rems += .1;
+
+
+            rating.style.transform = 'rotate(' + deg + 'deg)';
+            deg += 18;
+
+            if (opacity >= 1) {
+
+                clearTimeout(revealTimer);
+                rating.style.opacity = 1;
+                rating.style.border = "red 15px ridge";
+
+            }
+
+
+
+
+
+        };
+
+        /////////calculatePasserRatingFunctionTime/////
+        const calculatePasserRating = () => {
+
+
+            const _attempts = parseFloat(attempts);
+            const _completions = parseFloat(compleitions);
+            const _yards = parseFloat(yards);
+            const _touchdowns = parseFloat(touchdowns);
+            const _interceptions = parseFloat(interceptions);
+
+            var rating = 0;
+            var part;
+
+            //completions / attempts part
+            part = (_completions / _attempts - 0.3) * 5;
+            if (part > 2.375) {
+                part = 2.375;
+            } else if (part < 0) {
+                part = 0;
+            }
+            rating += part;
+
+            //touchdowns / attempts part
+            part = (_touchdownws / _attempts) * 20;
+            if (part > 2.375) {
+                part = 2.375;
+            } else if (part < 0) {
+                part = 0;
+            }
+
+            rating += part;
+
+            //interceptions / attempts part
+            part = 2.375 - (_interceptions / _attempts * 25);
+            if (part > 2.375) {
+                part = 2.375;
+
+            } else if (part < 0) {
+                part = 0;
+            }
+            rating += part;
+
+            rating = rating / 6 * 100;
+            rating = Math.round(rating, 1);
+
+            var ratingdiv = document.getElementById("rating");
+            ratingdiv.innerHTML = rating;
+
+
+        }
+
+
+
+
+
+
+        //display the paramter values
+
+        const displayParameters = () => {
+            document.getElementById("quarterback").innerHTML = decodeURIComponent(qbname);
+            document.getElementById("dateofgame").innerHTML = decodeURIComponent(gamedate);
+            document.getElementById("passattempts").innerHTML = decodeURIComponent(attempts);
+            document.getElementById("completedpasses").innerHTML = decodeURIComponent(completions);
+            document.getElementById("yardspassing").innerHTML = decodeURIComponent(yards);
+            document.getElementById("touchdowns").innerHTML = decodeURIComponent(touchdowns);
+            document.getElementById("interceptions").innerHTML = decodeURIComponent(interceptions);
+
+
+
+        };
+
+        //replaceAll
+        const replaceAll = (target, toReplace, replaceWith) => {
+            while (target.includes(toReplace)) {
+                target = target.replace(toReplace, replaceWith);
+
+            }
+            return target;
+
+        };
+
+        //getParameterValues
+        //parameterList:an array f name=value pairs
+        const getParameterValues = (parametersList) => {
+
+            //get all the values as strings
+            qbname = getUrlParameter(parameterList, "qbname");
+            email = getUrlParameter(parameterList, "email")
+            gamedate = getUrlParameter(parameterList, "gamedate")
+            attempts = getUrlParameter(parameterList, "attempts")
+            completions = getUrlParameter(parameterList, "completions")
+            yards = getUrlParameter(parameterList, "yards")
+            touchdowns = getUrlParameter(parameterList, "tds")
+            interceptions = getUrlParameter(parameterList, "ints")
+        }
+
+        //getUrlParameter
+        //parameterList: an array of name=value pairs
+        //name: the name of the parameter whose value is returned
+        const getUrlParameter = (parameterList, name) => {
+
+            //look through the list for an element that starts with
+            //the name we are looking for
+
+            for (var index = 0; index < parameterList.length; index++) {
+
+                if (parameterList[index].startsWith(name)) {
+                    //found it. Return its value
+                    const pair = parameterList[index].split("=");
+                    return pair[1];
+                }
+
+            }
+
+            //didnt find the parameter in the list
+            //return empty string
+            return "";
+
+
+        }
+    </script>
+
+
+
+
+
+</head>
+
+<body onload="onLoad() ;">
+    <h1 id="test"></h1>
+    <h1 id="quarterback"></h1>
+    <h2 id="dateofgame"></h2>
+    <table>
+        <caption>Passer Ratings Data</caption>
+        <thead>
+            <tr>
+                <th>Statistic</th>
+                <th>Value</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <tr>
+                <td>Pass Attempts</td>
+                <td id="passAttempts"></td>
+            </tr>
+            <tr>
+                <td>Completions</td>
+                <td id="completedpasses"></td>
+            </tr>
+            <tr>
+                <td>Yards Passing</td>
+                <td id="yardspassing"></td>
+            </tr>
+            <tr>
+                <td>Touch Downs</td>
+                <td id="touchdowns"></td>
+            </tr>
+            <tr>
+                <td>Interceptions</td>
+                <td id="interceptions"></td>
+            </tr>
+
+
+        </tbody>
+    </table>
+    <h1>Passer Rating Is...wait for it...</h1>
+    <div id="rating">0</div>
+
+</body>
+
+</body>
+
+</html>
